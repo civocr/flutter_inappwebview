@@ -17,13 +17,18 @@ extension WKUserContentController {
 
     @available(iOS 14.0, *)
     private static var _contentWorlds = [String: Set<WKContentWorld>]()
+    private static let contentWorldsLock = NSLock()
     @available(iOS 14.0, *)
     var contentWorlds: Set<WKContentWorld> {
         get {
+            Self.contentWorldsLock.lock()
+            defer { Self.contentWorldsLock.unlock() }
             let tmpAddress = String(format: "%p", unsafeBitCast(self, to: Int.self))
             return WKUserContentController._contentWorlds[tmpAddress] ?? []
         }
-        set(newValue) {
+        set {
+            Self.contentWorldsLock.lock()
+            defer { Self.contentWorldsLock.unlock() }
             let tmpAddress = String(format: "%p", unsafeBitCast(self, to: Int.self))
             WKUserContentController._contentWorlds[tmpAddress] = newValue
         }
@@ -154,6 +159,9 @@ extension WKUserContentController {
 
     @available(iOS 14.0, *)
     public func generateCodeForScriptEvaluation(scriptMessageHandler: WKScriptMessageHandler, source: String, contentWorld: WKContentWorld) -> String {
+        Self.contentWorldsLock.lock()
+        defer { Self.contentWorldsLock.unlock() }
+        
         let (inserted, _) = contentWorlds.insert(contentWorld)
         if inserted {
             var generatedCode = ""
