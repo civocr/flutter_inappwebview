@@ -106,6 +106,11 @@ public class InAppWebViewManager: ChannelDelegate {
                 websiteDataTypes.insert(WKWebsiteDataTypeFetchCache)
             }
             websiteDataTypes.insert(WKWebsiteDataTypeOfflineWebApplicationCache)
+            websiteDataTypes.insert(WKWebsiteDataTypeLocalStorage)
+            websiteDataTypes.insert(WKWebsiteDataTypeWebSQLDatabases)
+            websiteDataTypes.insert(WKWebsiteDataTypeApplicationCache)
+            websiteDataTypes.insert(WKWebsiteDataTypeCookies)
+            websiteDataTypes.insert(WKWebsiteDataTypeSessionStorage)
         }
         let date = NSDate(timeIntervalSince1970: 0)
         WKWebsiteDataStore.default().removeData(ofTypes: websiteDataTypes, modifiedSince: date as Date, completionHandler: completionHandler)
